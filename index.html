@@ -137,7 +137,7 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 
 <p>However after this setup, we are left with a table with over 400 predictors. Using the Classification Learner, we create a decision tree using 5 fold cross validation and generate a confusion matrix to see the accuracy of our classifier.</p>
 
-<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/categoryClassifierConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/categoryClassifierConfusionMatrix.jpg" alt=""></p>
 
 <p>As you can see, this is not a very accurate classifier. The high amount of false positives imply that there is a bias towards high ratings because there are more high rated businesses than low rated businesses. However I still created a Bagged Tree Classifier to evaluate the important features.</p>
 
@@ -298,20 +298,6 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <a id="feature-importance-9" class="anchor" href="#feature-importance-9" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
 
 <p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/WaterlooOOBImportanceGraph.jpg" alt=""></p>
-
-<h1>
-<a id="attributes-in-karlsruhe-1" class="anchor" href="#attributes-in-karlsruhe-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="karlsruhe"></a>Attributes in Karlsruhe</h1>
-
-<h3>
-<a id="classification-confusion-matrix-10" class="anchor" href="#classification-confusion-matrix-10" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
-
-<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/KarlsruheAttributeConfusionMatrix.jpg" alt=""></p>
-
-<h3>
-<a id="feature-importance-10" class="anchor" href="#feature-importance-10" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
-
-<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/KarlsruheOOBImportanceGraph.jpg" alt=""></p>
 
 <h1>
 <a id="combined-city-attributes" class="anchor" href="#combined-city-attributes" aria-hidden="true"><span class="octicon octicon-link"></span></a>
