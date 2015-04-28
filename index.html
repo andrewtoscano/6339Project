@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Top Business Attribute Identification by andrewtoscano</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Top Business Attribute Identification</h1>
+      <h2 class="project-tagline">Yelp Dataset Challenge CSE 4334</h2>
+      <a href="https://github.com/andrewtoscano/6339Project" class="btn">View on GitHub</a>
+      <a href="https://github.com/andrewtoscano/6339Project/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/andrewtoscano/6339Project/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="scroll-to" class="anchor" href="#scroll-to" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="top"></a>Scroll To</h1>
+
+<p><a href="#objective">Project Objective</a><br>
+<a href="#category">Classification by Category</a><br>
+<a href="#attribute">Classification by Attribute</a><br>
+<a href="#charlotte">Attributes in Charlotte</a><br>
+<a href="#edinburgh">Attributes in Edinburgh</a><br>
+<a href="#karlsruhe">Attributes in Karlsruhe</a><br>
+<a href="#lasvegas">Attributes in Las Vegas</a><br>
+<a href="#madison">Attributes in Madison</a><br>
+<a href="#montreal">Attributes in Montreal</a><br>
+<a href="#phoenix">Attributes in Phoenix</a><br>
+<a href="#pittsburgh">Attributes in Pittsburgh</a><br>
+<a href="#waterloo">Attributes in Waterloo</a><br>
+<a href="#combined">Combined City Attributes</a>   </p>
+
+<h1>
+<a id="project-objective" class="anchor" href="#project-objective" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="objective"></a>Project Objective</h1>
+
+<p>Using the Yelp Dataset, I wanted to find out which business attributes people valued when evaluating a business, and see if there was a correlation between business attributes and good (or bad) ratings. I used MATLAB to create single decision trees as well as random forests with the bagged tree method. I used these to evaluate the accuracy of classifying businesses by categories and attributes as well as to find the most important features.</p>
+
+<h1>
+<a id="classification-by-category" class="anchor" href="#classification-by-category" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="category"></a>Classification By Category</h1>
+
+<p>My first task was to create a classifier which used the categories the business had as a predictor and the rating as a response. I also wanted to include which days of the week the businesses were open, to see if being open on the weekends would be beneficial to a business' rating. The Yelp Dataset was inconsistent in format, so each line was parsed separately resulting in different structures for each line. To get this data into a format that MATLAB would accept for the Classification Learner, I used this code to get the category names, eliminate the categories that were uncommon, and create a table whose columns referred to a category and whose rows were binary data telling whether or not it belonged to that category.</p>
+
+<pre><code>%Find a list of all unique attributes
+function [category_names] = getCategoryNames(business_data)
+    counter=1;
+    category_names={};
+    %add days of week open as an attribute
+    category_names{end+1} = 'Monday';
+    category_names{end+1} = 'Tuesday';
+    category_names{end+1} = 'Wednesday';
+    category_names{end+1} = 'Thursday';
+    category_names{end+1} = 'Friday';
+    category_names{end+1} = 'Saturday';
+    category_names{end+1} = 'Sunday';
+    unique_category_names = {};
+    all_category_names = {};
+    while counter &lt;= length(business_data)
+        if gt(length(business_data(counter).categories), 0)
+            for fname = business_data(counter).categories(1,:)
+                for k=1:length(fname)
+                    %only get first word of category to combine types
+                    name = strsplit(fname{k});
+                    newname = name{1};
+                    if isempty(find(strcmp(unique_category_names, newname)))
+                        unique_category_names{end+1} = newname;
+                    end
+                    all_category_names{end+1} = newname;
+                end
+            end
+        end
+        counter = counter+1;
+    end
+
+    counter = 1;
+    for aname = unique_category_names(1,:)
+        %disregard uncommon types of business
+        if length(find(strcmp(all_category_names, aname))) &gt;= 20
+            category_names{end+1} = aname{1};
+        end
+        counter = counter + 1;
+    end
+    category_names{end+1} = 'HighRating';
+
+%Turn business data into format we can create decision trees, cells with columns for attribute names 
+function [category_table] =  setupCategoryBusinessData(business_data, category_names)
+    category_cells = zeros(length(business_data), length(category_names));
+
+    counter =1;
+    while(counter &lt;= length(business_data))
+        if gt(length(business_data(counter).categories), 0)
+            for fname = business_data(counter).categories(1,:)
+                for k=1:length(fname)
+                    name = strsplit(fname{k});
+                    newname = name{1};
+                    index = find(strcmp(category_names, newname));
+                    if not(isempty(index))
+                        category_cells(counter,index) = 1;
+                    end
+                end
+            end
+        end
+        if gt(length(fieldnames(business_data(counter).hours)), 0)
+            for fname = fieldnames(business_data(counter).hours(1,:))
+                for k=1:length(fname)
+                    category_cells(counter,find(strcmp(category_names, fname{k}))) = 1;
+                end
+            end
+        end 
+        rating = business_data(counter).stars;
+        if (rating &gt; 3.0)
+            category_cells(counter, end) = 1;
+        end
+        counter = counter + 1;
+    end
+    %remove unneeded characters from variable names
+    fixed_category_names = {};
+    fixed_category_names = strrep(strrep(category_names, '&amp;', '_'), ' ', '_');
+    fixed_category_names = strrep(strrep(fixed_category_names, '(', '_'), ')', '_');
+    fixed_category_names = strrep(strrep(fixed_category_names, '-', '_'), ',', '_');
+    fixed_category_names = strrep(strrep(fixed_category_names, char(39), '_'), '/', '');
+    %convert array to table with column names
+
+
+    category_table = array2table(category_cells, 'VariableNames', fixed_category_names);
+    clear('category_cells');
+    clear('fixed_category_names');
+</code></pre>
+
+<p>However after this setup, we are left with a table with over 400 predictors. Using the Classification Learner, we create a decision tree using 5 fold cross validation and generate a confusion matrix to see the accuracy of our classifier.</p>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/categoryClassifierConfusionMatrix.jpg" alt=""></p>
+
+<p>As you can see, this is not a very accurate classifier. The high amount of false positives imply that there is a bias towards high ratings because there are more high rated businesses than low rated businesses. However I still created a Bagged Tree Classifier to evaluate the important features.</p>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/categoryOOBImportance.jpg" alt=""></p>
+
+<p>By permutating each variable over many trees, the out of bag feature importance is evaluated by the change in classification rate. This implies that these are the most important categories that should determine whether a business is highly rated or not. </p>
+
+<h1>
+<a id="classification-by-attribute" class="anchor" href="#classification-by-attribute" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="attribute"></a>Classification by Attribute</h1>
+
+<p>To evaluate the classification by attributes, a very similar method of setting up the data was used. Because the predictors were much less numerous, it was possible to use a larger bag of trees for evaluation, which would provide better accuracy. This is the resulting classification confusion matrix.</p>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/attributeClassifierConfusionMatrix.jpg" alt=""></p>
+
+<p>Although there is an increase in accuracy, it is still fairly inaccurate. Here is the resulting out of bag feature importance.</p>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/attributeOOBImportance.jpg" alt=""></p>
+
+<p>By separating the data by each major city and creating a new classifier for each, we can see that the accuracy will be quite accurate for certain cities and that the important features will differ.</p>
+
+<h1>
+<a id="attributes-in-charlotte" class="anchor" href="#attributes-in-charlotte" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="charlotte"></a>Attributes in Charlotte</h1>
+
+<h3>
+<a id="classification-confusion-matrix" class="anchor" href="#classification-confusion-matrix" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/CharlotteAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance" class="anchor" href="#feature-importance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/CharlotteOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-charlotte-1" class="anchor" href="#attributes-in-charlotte-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="charlotte"></a>Attributes in Charlotte</h1>
+
+<h3>
+<a id="classification-confusion-matrix-1" class="anchor" href="#classification-confusion-matrix-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/CharlotteAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-1" class="anchor" href="#feature-importance-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/CharlotteOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-edinburgh" class="anchor" href="#attributes-in-edinburgh" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="edinburgh"></a>Attributes in Edinburgh</h1>
+
+<h3>
+<a id="classification-confusion-matrix-2" class="anchor" href="#classification-confusion-matrix-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/EdinburghAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-2" class="anchor" href="#feature-importance-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/EdinburghOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-karlsruhe" class="anchor" href="#attributes-in-karlsruhe" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="karlsruhe"></a>Attributes in Karlsruhe</h1>
+
+<h3>
+<a id="classification-confusion-matrix-3" class="anchor" href="#classification-confusion-matrix-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/KarlsruheAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-3" class="anchor" href="#feature-importance-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/KarlsruheOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-las-vegas" class="anchor" href="#attributes-in-las-vegas" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="lasvegas"></a>Attributes in Las Vegas</h1>
+
+<h3>
+<a id="classification-confusion-matrix-4" class="anchor" href="#classification-confusion-matrix-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/Las%20VegasAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-4" class="anchor" href="#feature-importance-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/Las%20VegasOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-madison" class="anchor" href="#attributes-in-madison" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="madison"></a>Attributes in Madison</h1>
+
+<h3>
+<a id="classification-confusion-matrix-5" class="anchor" href="#classification-confusion-matrix-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/MadisonAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-5" class="anchor" href="#feature-importance-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/MadisonOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-montreal" class="anchor" href="#attributes-in-montreal" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="montreal"></a>Attributes in Montreal</h1>
+
+<h3>
+<a id="classification-confusion-matrix-6" class="anchor" href="#classification-confusion-matrix-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/MontrealAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-6" class="anchor" href="#feature-importance-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/MontrealOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-phoenix" class="anchor" href="#attributes-in-phoenix" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="phoenix"></a>Attributes in Phoenix</h1>
+
+<h3>
+<a id="classification-confusion-matrix-7" class="anchor" href="#classification-confusion-matrix-7" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/PhoenixAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-7" class="anchor" href="#feature-importance-7" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/PhoenixOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-pittsburgh" class="anchor" href="#attributes-in-pittsburgh" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="pittsburgh"></a>Attributes in Pittsburgh</h1>
+
+<h3>
+<a id="classification-confusion-matrix-8" class="anchor" href="#classification-confusion-matrix-8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/PittsburghAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-8" class="anchor" href="#feature-importance-8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/PittsburghOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-waterloo" class="anchor" href="#attributes-in-waterloo" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="waterloo"></a>Attributes in Waterloo</h1>
+
+<h3>
+<a id="classification-confusion-matrix-9" class="anchor" href="#classification-confusion-matrix-9" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/WaterlooAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-9" class="anchor" href="#feature-importance-9" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/WaterlooOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="attributes-in-karlsruhe-1" class="anchor" href="#attributes-in-karlsruhe-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="karlsruhe"></a>Attributes in Karlsruhe</h1>
+
+<h3>
+<a id="classification-confusion-matrix-10" class="anchor" href="#classification-confusion-matrix-10" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/KarlsruheAttributeConfusionMatrix.jpg" alt=""></p>
+
+<h3>
+<a id="feature-importance-10" class="anchor" href="#feature-importance-10" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/KarlsruheOOBImportanceGraph.jpg" alt=""></p>
+
+<h1>
+<a id="combined-city-attributes" class="anchor" href="#combined-city-attributes" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a name="combined"></a>Combined City Attributes</h1>
+
+<p>By adding up how many times each attribute occurs in one of the 9 major cities, we can more properly identify what attributes are most valued as a whole.</p>
+
+<p><img src="https://github.com/andrewtoscano/6339Project/blob/master/figures/cityFeatureCount.jpg" alt=""></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/andrewtoscano/6339Project">Top Business Attribute Identification</a> is maintained by <a href="https://github.com/andrewtoscano">andrewtoscano</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
