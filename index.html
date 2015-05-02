@@ -137,9 +137,12 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 
 <p>However after this setup, we are left with a table with over 400 predictors. Using the Classification Learner, we create a decision tree using 5 fold cross validation and generate a confusion matrix to see the accuracy of our classifier.</p>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/categoryClassifierConfusionMatrix.jpg" alt=""></p>
-
-<p>As you can see, this is not a very accurate classifier. The high amount of false positives imply that there is a bias towards high ratings because there are more high rated businesses than low rated businesses. However I still created a Bagged Tree Classifier to evaluate the important features.</p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/categoryClassifierConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 24%</strong><br>
+<strong>False Positive Rate - 76%</strong><br>
+<strong>False Negative Rate - 5%</strong><br>
+<strong>True Positive Rate - 95%</strong><br>
+As you can see, this is not a very accurate classifier. The high amount of false positives imply that there is a bias towards high ratings because there are more high rated businesses than low rated businesses. However I still created a Bagged Tree Classifier to evaluate the important features.</p>
 
 <p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/categoryOOBImportance.jpg" alt=""></p>
 
@@ -151,7 +154,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 
 <p>To evaluate the classification by attributes, a very similar method of setting up the data was used. Because the predictors were much less numerous, it was possible to use a larger bag of trees for evaluation, which would provide better accuracy. This is the resulting classification confusion matrix.</p>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/attributeClassifierConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/attributeClassifierConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 31</strong><br>
+<strong>False Positive Rate - 69%</strong><br>
+<strong>False Negative Rate - 2%</strong><br>
+<strong>True Positive Rate - 98%</strong>    </p>
 
 <p>Although there is an increase in accuracy, it is still fairly inaccurate. Here is the resulting out of bag feature importance.</p>
 
@@ -171,7 +178,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <h3>
 <a id="classification-confusion-matrix" class="anchor" href="#classification-confusion-matrix" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/CharlotteAttributeConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/CharlotteAttributeConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 40%</strong><br>
+<strong>False Positive Rate - 60%</strong><br>
+<strong>False Negative Rate - 1%</strong><br>
+<strong>True Positive Rate - 99%</strong>    </p>
 
 <h3>
 <a id="feature-importance" class="anchor" href="#feature-importance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
@@ -185,7 +196,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <h3>
 <a id="classification-confusion-matrix-1" class="anchor" href="#classification-confusion-matrix-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/EdinburghAttributeConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/EdinburghAttributeConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 27%</strong><br>
+<strong>False Positive Rate - 73%</strong><br>
+<strong>False Negative Rate - &lt; 1%</strong><br>
+<strong>True Positive Rate - 99%</strong>    </p>
 
 <h3>
 <a id="feature-importance-1" class="anchor" href="#feature-importance-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
@@ -199,7 +214,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <h3>
 <a id="classification-confusion-matrix-2" class="anchor" href="#classification-confusion-matrix-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/KarlsruheAttributeConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/KarlsruheAttributeConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 37%</strong><br>
+<strong>False Positive Rate - 63%</strong><br>
+<strong>False Negative Rate - 0%</strong><br>
+<strong>True Positive Rate - 100%</strong>    </p>
 
 <h3>
 <a id="feature-importance-2" class="anchor" href="#feature-importance-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
@@ -213,7 +232,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <h3>
 <a id="classification-confusion-matrix-3" class="anchor" href="#classification-confusion-matrix-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/Las%20VegasAttributeConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/Las%20VegasAttributeConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 35%</strong><br>
+<strong>False Positive Rate - 65%</strong><br>
+<strong>False Negative Rate - 1.5%</strong><br>
+<strong>True Positive Rate - 98.5%</strong>    </p>
 
 <h3>
 <a id="feature-importance-3" class="anchor" href="#feature-importance-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
@@ -227,7 +250,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <h3>
 <a id="classification-confusion-matrix-4" class="anchor" href="#classification-confusion-matrix-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/MadisonAttributeConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/MadisonAttributeConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 48%</strong><br>
+<strong>False Positive Rate - 52%</strong><br>
+<strong>False Negative Rate - &lt; 1%</strong><br>
+<strong>True Positive Rate - 99%</strong>    </p>
 
 <h3>
 <a id="feature-importance-4" class="anchor" href="#feature-importance-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
@@ -241,7 +268,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <h3>
 <a id="classification-confusion-matrix-5" class="anchor" href="#classification-confusion-matrix-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/MontrealAttributeConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/MontrealAttributeConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 38%</strong><br>
+<strong>False Positive Rate - 62%</strong><br>
+<strong>False Negative Rate - &lt; 1%</strong><br>
+<strong>True Positive Rate - 99%</strong>    </p>
 
 <h3>
 <a id="feature-importance-5" class="anchor" href="#feature-importance-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
@@ -255,7 +286,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <h3>
 <a id="classification-confusion-matrix-6" class="anchor" href="#classification-confusion-matrix-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/PhoenixAttributeConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/PhoenixAttributeConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 35%</strong> 
+<strong>False Positive Rate - 65%</strong>
+<strong>False Negative Rate - 2%</strong>
+<strong>True Positive Rate - 98%</strong></p>
 
 <h3>
 <a id="feature-importance-6" class="anchor" href="#feature-importance-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
@@ -269,7 +304,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <h3>
 <a id="classification-confusion-matrix-7" class="anchor" href="#classification-confusion-matrix-7" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/PittsburghAttributeConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/PittsburghAttributeConfusionMatrix.jpg" alt="">
+<strong>True Negative Rate - 50%</strong><br>
+<strong>False Positive Rate - 50%</strong><br>
+<strong>False Negative Rate - &lt; 1%</strong><br>
+<strong>True Positive Rate - 99%</strong>    </p>
 
 <h3>
 <a id="feature-importance-7" class="anchor" href="#feature-importance-7" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
@@ -283,7 +322,11 @@ function [category_table] =  setupCategoryBusinessData(business_data, category_n
 <h3>
 <a id="classification-confusion-matrix-8" class="anchor" href="#classification-confusion-matrix-8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification Confusion Matrix</h3>
 
-<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/WaterlooAttributeConfusionMatrix.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/andrewtoscano/6339Project/master/figures/WaterlooAttributeConfusionMatrix.jpg" alt="">
+** True Negative Rate - 76%**<br>
+<strong>False Positive Rate - 24%</strong><br>
+<strong>False Negative Rate - 0%</strong><br>
+<strong>True Positive Rate - 100%</strong>    </p>
 
 <h3>
 <a id="feature-importance-8" class="anchor" href="#feature-importance-8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature Importance</h3>
