@@ -1,6 +1,4 @@
 %turn business data into format we can create decision trees, cells with columns for attribute names 
-%load('business_data.mat')
-%load('attribute_names.mat')
 function [category_table] =  setupCategoryBusinessData(business_data, category_names)
 category_cells = zeros(length(business_data), length(category_names));
 
@@ -43,4 +41,3 @@ fixed_category_names = strrep(strrep(fixed_category_names, char(39), '_'), '/', 
 category_table = array2table(category_cells, 'VariableNames', fixed_category_names);
 clear('category_cells');
 clear('fixed_category_names');
-%save('attribute_table.mat', attribute_table);

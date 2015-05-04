@@ -41,4 +41,3 @@ end
 category_names{end+1} = 'HighRating';
 clear('unique_category_names');
 clear('all_category_names');
-%save('attribute_names.mat', 'attribute_names');

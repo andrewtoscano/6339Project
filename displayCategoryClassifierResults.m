@@ -1,6 +1,6 @@
 %get classified data, confusion matrix as well as feature importance%
 
-%load(business_data.mat)
+load(business_data.mat)
 category_names = getCategoryNames(business_data);
 category_table = setupCategoryBusinessData(business_data, category_names);
 [trainedCategoryClassifier, categoryValidationAccuracy] = trainCategoryClassifier(category_table);

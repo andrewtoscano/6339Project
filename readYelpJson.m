@@ -3,7 +3,7 @@ fid = fopen('yelp_academic_dataset_business.json');
 
 tline = fgetl(fid);
 counter = 1;
-%business_data = struct([]);
+business_data = struct([]);
 while ischar(tline)
     disp(tline);
     business_data(counter) = loadjson(tline);
@@ -13,4 +13,4 @@ end
 
 fclose(fid);
 
-%save('business_data.mat', 'business_data')
+save('business_data.mat', 'business_data')

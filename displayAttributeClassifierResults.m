@@ -17,7 +17,7 @@ disp(confusion_matrix)
 saveas(attributeMatrix, 'attributeClassifierConfusionMatrix.fig');
 
 %from matlab site to get feature importance
-tree_bag = TreeBagger(50,X,Y,'OOBPred','On', 'OOBVarImp', 'On');
+tree_bag = TreeBagger(150,X,Y,'OOBPred','On', 'OOBVarImp', 'On');
 classification_error = tree_bag.OOBPermutedVarDeltaError;
 
 topErrors = zeros([1,10]);
